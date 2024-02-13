@@ -3,7 +3,7 @@ const { getSuperheroes } = require('./gameService');
 let heroesObject = {}; 
 let junkpileHeroObject;
 let randomHeroObject;
-let erudito;
+let eruditoHeroObject = {};
 
 async function getHeroes(req, res) {
     try {
@@ -64,13 +64,10 @@ async function createNewHeroes() {
             const eruditoHero = {
                 name: "El Erudito X.G.",
                 angerLevel: 0,
-                hitPointsGlasses: 0, // Inicializamos hitPointsGlasses con un valor temporal
+                hitPointsGlasses: 1,
                 hitPoints: "invincible"
             };
-
-            // Asignar el valor de hitPointsGlasses después de inicializar eruditoHero
-            eruditoHero.hitPointsGlasses = 1 + eruditoHero.angerLevel;
-
+            
             // Crear un nuevo objeto con el héroe Erudito
             eruditoHeroObject = {
                 Erudito: eruditoHero
@@ -81,7 +78,7 @@ async function createNewHeroes() {
         // Una vez que se han creado los objetos de los héroes, llamar a calculateStart
         calculateStart();
 
-        simulateCombat()
+        simulateCombat(eruditoHero)
     } catch (error) {
         console.error('Error al inicializar:', error.message);
     }
@@ -242,13 +239,18 @@ function simulateTurn(attacker, defender) {
 
 
 
-function simulateCombat() {
+function simulateCombat(eruditoHero) {
     let turnCounter = 1; 
-    
+    let eruditoTurn = false; // Variable para controlar si es el turno del Erudito
+    let firstEruditoTurn = true;
     const startingHero = determineStartingHero(junkpileHeroObject.JunkPile.powerstats.junkPileStats, randomHeroObject.RandomHero.powerstats.junkPileStats);
     let currentHero = startingHero;
     
     console.log(`El combate comienza con turno para ${startingHero}.`);
+
+    if (eruditoHero.hitPointsGlasses < 0) {
+        console.log('El Erudito ha muerto.')
+        eruditoTurn= false;}
     
     function nextTurn() {
         console.log(`                                   `);
@@ -257,23 +259,118 @@ function simulateCombat() {
         console.log(`ASALTO ${turnCounter}:`);
         console.log(`///////////////////////////////////`);
         
-        // Simular el turno actual
-        const nextHero = simulateTurn(currentHero, currentHero === 'JunkPile' ? 'RandomHero' : 'JunkPile');
         
-        if (nextHero) {
-            currentHero = nextHero;
-            turnCounter++; 
-            setTimeout(nextTurn, 5000);  
-        } else {
-            //console.log('Fin del combate.');
+        let attacker;
+        let isRogue = false;
+
+        if (currentHero !== 'Erudito' && isRogue) {
+            // Aplicar efectos de las gafas del Erudito al héroe rival
+            console.log(`Las gafas del Erudito pasan al héroe rival.`);
+            
+            isRogue = false; 
         }
+        // Verificar si es el turno del Erudito
+        if (turnCounter % (Math.floor(Math.random() * (5 - 3 + 1)) + 3) === 0) {
+            console.log(`El Erudito entra en escena.`);
+            eruditoTurn = true;
+        } else {
+            eruditoTurn = false;
+        }
+        
+        // Si es el turno del Erudito, aplicar sus efectos
+        if (eruditoTurn) {
+            console.log(eruditoHero);
+            // Tirar un dado de 20 caras para determinar el poder del Erudito
+            const eruditoPowerRoll = rollD20();
+
+             // Verificar si es la primera vez que el Erudito está activo
+            if (firstEruditoTurn) {
+                eruditoHero.angerLevel = eruditoPowerRoll;
+                eruditoHero.hitPointsGlasses = 1 + eruditoHero.angerLevel;
+                
+                console.log(`El Erudito utiliza su poder por primera vez.`);
+                
+                // Cambiar el estado para indicar que ya no es la primera vez que el Erudito está activo
+                firstEruditoTurn = false;
+            }
+
+            console.log(`El Erudito utiliza su poder. Tira 1D20 y obtiene ${eruditoPowerRoll}.`);
+            
+            // Aplicar los efectos del poder del Erudito según el resultado del dado
+            switch (true) {
+                case eruditoPowerRoll >= 1 && eruditoPowerRoll <= 3:
+                    console.log(`El poder del Erudito causa una pifia al héroe atacante.`);
+                    
+                    attacker = currentHero === 'JunkPile' ? junkpileHeroObject.JunkPile : randomHeroObject.RandomHero;
+                    console.log(`Antes de la pifia - Damage Roll del héroe atacante: ${eruditoPowerRoll}, Strength: ${attacker.powerstats.strength}`);
+                    
+                    attacker.damageRoll = Math.max(1, attacker.damageRoll - 1); 
+                    attacker.powerstats.strength = Math.floor(attacker.powerstats.strength / 2); 
+                    
+                    console.log(`Después de la pifia - Damage Roll del héroe atacante: ${eruditoPowerRoll}, Strength: ${attacker.powerstats.strength}`);
+                    break;
+                case eruditoPowerRoll >= 4 && eruditoPowerRoll <= 6:
+                    console.log(`El poder del Erudito causa una pifia al héroe atacante.`);
+                    
+                    attacker = currentHero === 'JunkPile' ? junkpileHeroObject.JunkPile : randomHeroObject.RandomHero;
+                    console.log(`Antes de la pifia - Damage Roll del héroe atacante: ${eruditoPowerRoll}, Strength: ${attacker.powerstats.strength}`);
+                    
+                    attacker.damageRoll = Math.max(1, attacker.damageRoll - 1); 
+                    attacker.powerstats.strength = Math.floor(attacker.powerstats.strength / 2); 
+                    
+                    console.log(`Después de la pifia - Damage Roll del héroe atacante: ${eruditoPowerRoll}, Strength: ${attacker.powerstats.strength}`);
+                    break;
+                case eruditoPowerRoll >= 7 && eruditoPowerRoll <= 9:
+                    console.log(`El poder del Erudito provoca caos en el combate.`);
+                    
+                    currentHero = currentHero === 'JunkPile' ? 'RandomHero' : 'JunkPile';
+                    console.log(`Turno cambiado a ${currentHero}.`);
+                    break;
+                case eruditoPowerRoll >= 10 && eruditoPowerRoll <= 13:
+                    console.log(`El poder del Erudito desata un aullido poderoso.`);
+                    // Aplicar daño al Erudito con un dado de 100 caras (1D100)
+                    const eruditoDamage = rollD100();
+                    console.log(`El Erudito sufre ${eruditoDamage} puntos de daño.`);
+                    // Reducir los puntos de vida del Erudito según el daño infligido
+                    eruditoHero.hitPointsGlasses -= eruditoDamage;
+                    break;
+                    
+                case eruditoPowerRoll >= 14 && eruditoPowerRoll <= 16:
+                    console.log(`El poder del Erudito convierte al héroe atacante en un granuja.`);
+                    // Aplicar efectos de granuja al héroe atacante
+                    isRogue = true; 
+                    break;
+                    
+                case eruditoPowerRoll >= 17 && eruditoPowerRoll <= 18:
+                    console.log(`El poder del Erudito otorga perspicacia al héroe .`);
+                    console.log(`El Erudito ni se inmuta, parece invencible.`);
+                    break;
+                case eruditoPowerRoll >= 19 && eruditoPowerRoll <= 20:
+                    console.log(`El poder del Erudito hace al héroe atacante más experto.`);
+                    console.log(`El ERDUTIO HA DESAPARECIDO.`);
+                    eruditoTurn = false;
+                    break;
+                default:
+                    console.log(`El Erudito no logra desencadenar un poder efectivo.`);
+            }
+        }
+        
+        
+            // Continuar con el turno del otro héroe
+            const nextHero = simulateTurn(currentHero, currentHero === 'JunkPile' ? 'RandomHero' : 'JunkPile');
+            
+            if (nextHero) {
+                currentHero = nextHero;
+                turnCounter++; 
+                setTimeout(nextTurn, 5000);  
+            } else {
+                // Fin del combate
+            }
+            return; 
+        
     }
 
     nextTurn();
 }
-
-
-
-
 
 module.exports = { getHeroes };

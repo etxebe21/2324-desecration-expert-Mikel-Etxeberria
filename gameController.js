@@ -3,6 +3,7 @@ const { getSuperheroes } = require('./gameService');
 let heroesObject = {}; 
 let junkpileHeroObject;
 let randomHeroObject;
+let erudito;
 
 async function getHeroes(req, res) {
     try {
@@ -58,6 +59,24 @@ async function createNewHeroes() {
          randomHero.powerstats.hitPoints = randomHero.powerstats.hitPoints > 666 ? 666 : randomHero.powerstats.hitPoints;
         
         console.log('Héroe aleatorio:', randomHeroObject);
+
+         // Crear al nuevo héroe "Erudito"
+            const eruditoHero = {
+                name: "El Erudito X.G.",
+                angerLevel: 0,
+                hitPointsGlasses: 0, // Inicializamos hitPointsGlasses con un valor temporal
+                hitPoints: "invincible"
+            };
+
+            // Asignar el valor de hitPointsGlasses después de inicializar eruditoHero
+            eruditoHero.hitPointsGlasses = 1 + eruditoHero.angerLevel;
+
+            // Crear un nuevo objeto con el héroe Erudito
+            eruditoHeroObject = {
+                Erudito: eruditoHero
+            };
+
+            console.log('Nuevo héroe Erudito:', eruditoHeroObject)
 
         // Una vez que se han creado los objetos de los héroes, llamar a calculateStart
         calculateStart();

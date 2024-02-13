@@ -67,7 +67,7 @@ async function createNewHeroes() {
                 hitPointsGlasses: 1,
                 hitPoints: "invincible"
             };
-            
+
             // Crear un nuevo objeto con el héroe Erudito
             eruditoHeroObject = {
                 Erudito: eruditoHero
@@ -278,7 +278,7 @@ function simulateCombat(eruditoHero) {
         }
         
         // Si es el turno del Erudito, aplicar sus efectos
-        if (eruditoTurn) {
+        if (eruditoTurn && eruditoHero.hitPointsGlasses > 0 ) {
             console.log(eruditoHero);
             // Tirar un dado de 20 caras para determinar el poder del Erudito
             const eruditoPowerRoll = rollD20();

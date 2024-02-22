@@ -300,7 +300,6 @@ function simulateCombat(eruditoHero) {
     
                // Actualizar el intervalo de aparición del Erudito
                let  eruditoAppearanceInterval = Math.floor(Math.random() * (5 - 3 + 1)) + 3;
-               console.log('//////////////////////////////////', eruditoAppearanceInterval);
             // Verificar si es el turno del Erudito
             if (turnCounter % eruditoAppearanceInterval === 0 && eruditoHero.hitPointsGlasses > 0) {
                 console.log(`El Erudito entra en escena.`);

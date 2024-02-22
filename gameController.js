@@ -16,7 +16,7 @@ async function getHeroes(req, res) {
             heroesObject[hero.name] = hero;
         });
 
-        console.log('HEROES', heroesObject)
+        //console.log('HEROES', heroesObject)
 
         // Una vez que se han obtenido los datos, llamar a createNewHeroes
         await createNewHeroes();
@@ -160,7 +160,8 @@ function simulateTurn(attacker, defender) {
                 pifiaDamage = Math.floor(attacker === 'JunkPile' ? junkpileHeroObject.JunkPile.powerstats.speed / roll4D3() : randomHeroObject.RandomHero.powerstats.speed / roll4D3());
             }
             
-            console.log(`${attacker} sufre ${pifiaDamage} puntos de daño por pifia.`);
+             
+            console.log(`FAIL!! ${attacker} obtiene ${damageRoll} y se clava el arma en su pierna izquierda. Recibe un daño de ${pifiaDamage} puntos por pifia.`);
             
             // Reducir los puntos de vida del héroe que realiza la pifia
             if (attacker === 'JunkPile') {
@@ -183,11 +184,11 @@ function simulateTurn(attacker, defender) {
             let criticalDamage;
             
             if (damageRoll === 18) {
-                criticalDamage = Math.floor((attacker === 'JunkPile' ? junkpileHeroObject.JunkPile.powerstats.intelligence * junkpileHeroObject.JunkPile.powerstats.durability : randomHeroObject.RandomHero.powerstats.intelligence * randomHeroObject.RandomHero.powerstats.durability) / 100) * rollD3();
+                criticalDamage = Math.ceil((attacker === 'JunkPile' ? junkpileHeroObject.JunkPile.powerstats.intelligence * junkpileHeroObject.JunkPile.powerstats.durability : randomHeroObject.RandomHero.powerstats.intelligence * randomHeroObject.RandomHero.powerstats.durability) / 100) * rollD3();
             } else if (damageRoll === 19) {
-                criticalDamage = Math.floor((attacker === 'JunkPile' ? junkpileHeroObject.JunkPile.powerstats.intelligence * junkpileHeroObject.JunkPile.powerstats.durability : randomHeroObject.RandomHero.powerstats.intelligence * randomHeroObject.RandomHero.powerstats.durability) / 100) * (rollD3() + rollD3());
+                criticalDamage = Math.ceil((attacker === 'JunkPile' ? junkpileHeroObject.JunkPile.powerstats.intelligence * junkpileHeroObject.JunkPile.powerstats.durability : randomHeroObject.RandomHero.powerstats.intelligence * randomHeroObject.RandomHero.powerstats.durability) / 100) * (rollD3() + rollD3());
             } else {
-                criticalDamage = Math.floor((attacker === 'JunkPile' ? junkpileHeroObject.JunkPile.powerstats.intelligence * junkpileHeroObject.JunkPile.powerstats.durability : randomHeroObject.RandomHero.powerstats.intelligence * randomHeroObject.RandomHero.powerstats.durability) / 100) * (rollD5() + rollD5() + rollD5());
+                criticalDamage = Math.ceil((attacker === 'JunkPile' ? junkpileHeroObject.JunkPile.powerstats.intelligence * junkpileHeroObject.JunkPile.powerstats.durability : randomHeroObject.RandomHero.powerstats.intelligence * randomHeroObject.RandomHero.powerstats.durability) / 100) * (rollD5() + rollD5() + rollD5());
             }
             
             console.log(`¡CRITICAL HIT! ${attacker} inflige ${criticalDamage} puntos de daño crítico a ${defender}.`);
@@ -246,7 +247,19 @@ function simulateCombat(eruditoHero) {
     const startingHero = determineStartingHero(junkpileHeroObject.JunkPile.powerstats.junkPileStats, randomHeroObject.RandomHero.powerstats.junkPileStats);
     let currentHero = startingHero;
     
-    console.log(`El combate comienza con turno para ${startingHero}.`);
+     //MENSAJE INICIAL DE BATALLA
+     console.log(`                                   `);
+     console.log(`///////////////////////////////////`);
+     console.log('WELCOME TO THE COMBAT ARENA');
+     console.log(`///////////////////////////////////`);
+     console.log(`Hoy combatiran ${startingHero} y ${oppositeHero}`);
+     console.log(`///////////////////////////////////`);
+     console.log(`                                   `);
+     console.log(`Lista de atributos`);
+     console.log('JunkPile: ', junkpileHeroObject.JunkPile.powerstats);
+     console.log('RandomHero: ', randomHeroObject.RandomHero.powerstats);
+     console.log(`///////////////////////////////////`);
+     console.log(`El combate comienza con turno para ${startingHero}.`);
 
     if (eruditoHero.hitPointsGlasses < 0) {
         console.log('El Erudito ha muerto.')

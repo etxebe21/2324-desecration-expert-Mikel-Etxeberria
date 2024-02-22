@@ -262,57 +262,62 @@ function simulateCombat(eruditoHero) {
      console.log(`///////////////////////////////////`);
      console.log(`El combate comienza con turno para ${startingHero}.`);
 
-    if (eruditoHero.hitPointsGlasses < 0) {
-        console.log('El Erudito ha muerto.')
-        eruditoTurn= false;}
-    
-    function nextTurn() {
+     function nextTurn() {
+       
         console.log(`                                   `);
         console.log(`///////////////////////////////////`);
         // Mostrar el número de turno actual
         console.log(`ASALTO ${turnCounter}:`);
         console.log(`///////////////////////////////////`);
-        
-        
-        let attacker;
-        let isRogue = false;
 
-        if (currentHero !== 'Erudito' && isRogue) {
-            // Aplicar efectos de las gafas del Erudito al héroe rival
-            console.log(`Las gafas del Erudito pasan al héroe rival.`);
-            
-            isRogue = false; 
+        if (eruditoTurn) {
+            if (eruditoHero.hitPointsGlasses <= 0) {
+                //console.log(`El Erudito ha muerto.`);
+                eruditoTurn = false;
+            }else{
+            console.log(`Es turno del Erudito.`);
+           
+                if (eruditoHero.hitPointsGlasses > 0) {
+                    const nextHero = simulateTurn('Erudito', currentHero === 'JunkPile' ? 'RandomHero' : 'JunkPile');
+                    currentHero = nextHero || currentHero;
+                    turnCounter++;
+                }
+                eruditoTurn = false;
+            } 
         }
-        // Verificar si es el turno del Erudito
-        if (turnCounter % (Math.floor(Math.random() * (5 - 3 + 1)) + 3) === 0) {
-            console.log(`El Erudito entra en escena.`);
-            console.log(eruditoHero);
-            eruditoTurn = true;
-            if (eruditoHero.hitPointsGlasses < 0) {
-                console.log('El Erudito ha muerto.')
-                eruditoTurn= false;}
-        } else {
-            eruditoTurn = false;
-        }
-        
-        // Si es el turno del Erudito, aplicar sus efectos
-        if (eruditoTurn && eruditoHero.hitPointsGlasses > 0 ) {
-            //console.log(eruditoHero);
-            // Tirar un dado de 20 caras para determinar el poder del Erudito
-            const eruditoPowerRoll = rollD20();
-
-             // Verificar si es la primera vez que el Erudito está activo
-            if (firstEruditoTurn) {
-                eruditoHero.angerLevel = eruditoPowerRoll;
-                eruditoHero.hitPointsGlasses = 1 + eruditoHero.angerLevel;
-                
-                console.log(`El Erudito utiliza su poder por primera vez.`);
-                
-                // Cambiar el estado para indicar que ya no es la primera vez que el Erudito está activo
-                firstEruditoTurn = false;
+        else {
+            console.log(`Es turno de ${currentHero}.`);
+    
+            let attacker;
+            let isRogue = false;
+    
+            if (currentHero !== 'Erudito' && isRogue) {
+                console.log(`Las gafas del Erudito pasan al héroe rival.`);
+                isRogue = false;
             }
-
-            console.log(`El Erudito utiliza su poder. Tira 1D20 y obtiene ${eruditoPowerRoll}.`);
+    
+            // Verificar si es el turno del Erudito
+            if (turnCounter % (Math.floor(Math.random() * (5 - 3 + 1)) + 3) === 0 && eruditoHero.hitPointsGlasses > 0) {
+                console.log(`El Erudito entra en escena.`);
+                console.log(eruditoHero);
+                eruditoTurn = true;
+            } else {
+                eruditoTurn = false;
+            }
+    
+            // Si es el turno del Erudito, aplicar sus efectos
+            if (eruditoTurn && eruditoHero.hitPointsGlasses > 0) {
+                const eruditoPowerRoll = rollD20();
+    
+                if (firstEruditoTurn) {
+                    eruditoHero.angerLevel = eruditoPowerRoll;
+                    eruditoHero.hitPointsGlasses = 1 + eruditoHero.angerLevel;
+                    console.log(`El Erudito utiliza su poder por primera vez.`);
+                    firstEruditoTurn = false;
+                }
+    
+                console.log(`El Erudito utiliza su poder. Tira 1D20 y obtiene ${eruditoPowerRoll}.`);
+    
             
             // Aplicar los efectos del poder del Erudito según el resultado del dado
             switch (true) {
@@ -328,7 +333,7 @@ function simulateCombat(eruditoHero) {
                     console.log(`Después de la pifia - Damage Roll del héroe atacante: ${eruditoPowerRoll}, Strength: ${attacker.powerstats.strength}`);
                     break;
                 case eruditoPowerRoll >= 4 && eruditoPowerRoll <= 6:
-                    console.log(`PIFIA, El atacante se lesiona el brazo izquierdo, quedando su atributo STR dañado.`);
+                    console.log(`PIFIA, El atacante se lesiona el brazo derecho, quedando su atributo STR dañado.`);
                     
                     attacker = currentHero === 'JunkPile' ? junkpileHeroObject.JunkPile : randomHeroObject.RandomHero;
                     console.log(`Antes de la pifia - Damage Roll del héroe atacante: ${eruditoPowerRoll}, Strength: ${attacker.powerstats.strength}`);
@@ -371,21 +376,24 @@ function simulateCombat(eruditoHero) {
                 default:
                     console.log(`El Erudito no logra desencadenar un poder efectivo.`);
             }
-        }
-        
-        
-            // Continuar con el turno del otro héroe
-            const nextHero = simulateTurn(currentHero, currentHero === 'JunkPile' ? 'RandomHero' : 'JunkPile');
-            
-            if (nextHero) {
-                currentHero = nextHero;
-                turnCounter++; 
-                setTimeout(nextTurn, 5000);  
-            } else {
-                // Fin del combate
+            console.log('Atributos erudito actuales', eruditoHero);
+            if (eruditoHero.hitPointsGlasses <= 0) {
+                console.log(`El Erudito ha muerto.`);
+                //eruditoTurn = false;
             }
-            return; 
-        
+             console.log(`///////////////////////////////////`);
+            }
+        }
+    
+        const nextHero = simulateTurn(currentHero, currentHero === 'JunkPile' ? 'RandomHero' : 'JunkPile');
+    
+        if (nextHero) {
+            currentHero = nextHero;
+            turnCounter++;
+            setTimeout(nextTurn, 2000);
+        } else {
+            // Fin del combate
+        }
     }
 
     nextTurn();

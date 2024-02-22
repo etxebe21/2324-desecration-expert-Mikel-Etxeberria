@@ -246,6 +246,7 @@ function simulateCombat(eruditoHero) {
     let firstEruditoTurn = true;
     const startingHero = determineStartingHero(junkpileHeroObject.JunkPile.powerstats.junkPileStats, randomHeroObject.RandomHero.powerstats.junkPileStats);
     let currentHero = startingHero;
+    const oppositeHero = startingHero === 'JunkPile' ? 'RandomHero' : 'JunkPile';
     
      //MENSAJE INICIAL DE BATALLA
      console.log(`                                   `);
@@ -285,14 +286,18 @@ function simulateCombat(eruditoHero) {
         // Verificar si es el turno del Erudito
         if (turnCounter % (Math.floor(Math.random() * (5 - 3 + 1)) + 3) === 0) {
             console.log(`El Erudito entra en escena.`);
+            console.log(eruditoHero);
             eruditoTurn = true;
+            if (eruditoHero.hitPointsGlasses < 0) {
+                console.log('El Erudito ha muerto.')
+                eruditoTurn= false;}
         } else {
             eruditoTurn = false;
         }
         
         // Si es el turno del Erudito, aplicar sus efectos
         if (eruditoTurn && eruditoHero.hitPointsGlasses > 0 ) {
-            console.log(eruditoHero);
+            //console.log(eruditoHero);
             // Tirar un dado de 20 caras para determinar el poder del Erudito
             const eruditoPowerRoll = rollD20();
 
@@ -312,7 +317,7 @@ function simulateCombat(eruditoHero) {
             // Aplicar los efectos del poder del Erudito según el resultado del dado
             switch (true) {
                 case eruditoPowerRoll >= 1 && eruditoPowerRoll <= 3:
-                    console.log(`El poder del Erudito causa una pifia al héroe atacante.`);
+                    console.log(`PIFIA, El atacante se lesiona el brazo izquierdo, quedando su atributo STR dañado.`);
                     
                     attacker = currentHero === 'JunkPile' ? junkpileHeroObject.JunkPile : randomHeroObject.RandomHero;
                     console.log(`Antes de la pifia - Damage Roll del héroe atacante: ${eruditoPowerRoll}, Strength: ${attacker.powerstats.strength}`);
@@ -323,7 +328,7 @@ function simulateCombat(eruditoHero) {
                     console.log(`Después de la pifia - Damage Roll del héroe atacante: ${eruditoPowerRoll}, Strength: ${attacker.powerstats.strength}`);
                     break;
                 case eruditoPowerRoll >= 4 && eruditoPowerRoll <= 6:
-                    console.log(`El poder del Erudito causa una pifia al héroe atacante.`);
+                    console.log(`PIFIA, El atacante se lesiona el brazo izquierdo, quedando su atributo STR dañado.`);
                     
                     attacker = currentHero === 'JunkPile' ? junkpileHeroObject.JunkPile : randomHeroObject.RandomHero;
                     console.log(`Antes de la pifia - Damage Roll del héroe atacante: ${eruditoPowerRoll}, Strength: ${attacker.powerstats.strength}`);
@@ -334,13 +339,13 @@ function simulateCombat(eruditoHero) {
                     console.log(`Después de la pifia - Damage Roll del héroe atacante: ${eruditoPowerRoll}, Strength: ${attacker.powerstats.strength}`);
                     break;
                 case eruditoPowerRoll >= 7 && eruditoPowerRoll <= 9:
-                    console.log(`El poder del Erudito provoca caos en el combate.`);
+                    console.log(`CAOS, El atacante pierde la memoria y no ataca.`);
                     
                     currentHero = currentHero === 'JunkPile' ? 'RandomHero' : 'JunkPile';
                     console.log(`Turno cambiado a ${currentHero}.`);
                     break;
                 case eruditoPowerRoll >= 10 && eruditoPowerRoll <= 13:
-                    console.log(`El poder del Erudito desata un aullido poderoso.`);
+                    console.log(`AULLIDO, El erudito grita "TU ERES TONTO" y el atacante descubre donde se encuentra, momento que aprovechara para atacarle.`);
                     // Aplicar daño al Erudito con un dado de 100 caras (1D100)
                     const eruditoDamage = rollD100();
                     console.log(`El Erudito sufre ${eruditoDamage} puntos de daño.`);
@@ -349,18 +354,18 @@ function simulateCombat(eruditoHero) {
                     break;
                     
                 case eruditoPowerRoll >= 14 && eruditoPowerRoll <= 16:
-                    console.log(`El poder del Erudito convierte al héroe atacante en un granuja.`);
+                    console.log(`GRANUJA, El atacante aprovechara un despiste del enemigo para colocalrle las gafas.`);
                     // Aplicar efectos de granuja al héroe atacante
                     isRogue = true; 
                     break;
                     
                 case eruditoPowerRoll >= 17 && eruditoPowerRoll <= 18:
-                    console.log(`El poder del Erudito otorga perspicacia al héroe .`);
+                    console.log(`PERSPICAZ, El erudito detecta al atacante y le atrae con su famoso "tu eres tonto", momento que aprovecha para recuperar sus gafas.Sin embargo, la furia caotica del atacante se desata y embiste al Erudito.`);
                     console.log(`El Erudito ni se inmuta, parece invencible.`);
                     break;
                 case eruditoPowerRoll >= 19 && eruditoPowerRoll <= 20:
-                    console.log(`El poder del Erudito hace al héroe atacante más experto.`);
-                    console.log(`El ERDUTIO HA DESAPARECIDO.`);
+                    console.log(`ENDEMONIADO, El atacante desata todo el caos de EL Erudito, persiguiendole y cortandole la cabeza.`);
+                    console.log(`MUERTE, El Erudito desaparece de la partida y con el sus gafas se desvanecen.`);
                     eruditoTurn = false;
                     break;
                 default:

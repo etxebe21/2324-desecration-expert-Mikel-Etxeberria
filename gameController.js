@@ -225,8 +225,10 @@ function simulateTurn(attacker, defender) {
             console.log('El combate termina en empate.');
         } else if (junkpileHeroObject.JunkPile.powerstats.hitPoints <= 0) {
             console.log('El héroe RandomHero gana el combate.');
+            console.log('El héroe JankPile ha sido derrotado.');
         } else {
             console.log('El héroe JunkPile gana el combate.');
+            console.log('El héroe RandomHero ha sido derrotado.');
         }
         return;
     }
@@ -296,11 +298,15 @@ function simulateCombat(eruditoHero) {
                 isRogue = false;
             }
     
+               // Actualizar el intervalo de aparición del Erudito
+               let  eruditoAppearanceInterval = Math.floor(Math.random() * (5 - 3 + 1)) + 3;
+               console.log('//////////////////////////////////', eruditoAppearanceInterval);
             // Verificar si es el turno del Erudito
-            if (turnCounter % (Math.floor(Math.random() * (5 - 3 + 1)) + 3) === 0 && eruditoHero.hitPointsGlasses > 0) {
+            if (turnCounter % eruditoAppearanceInterval === 0 && eruditoHero.hitPointsGlasses > 0) {
                 console.log(`El Erudito entra en escena.`);
                 console.log(eruditoHero);
                 eruditoTurn = true;
+        
             } else {
                 eruditoTurn = false;
             }
@@ -376,6 +382,7 @@ function simulateCombat(eruditoHero) {
                 default:
                     console.log(`El Erudito no logra desencadenar un poder efectivo.`);
             }
+            console.log(``);
             console.log('Atributos erudito actuales', eruditoHero);
             if (eruditoHero.hitPointsGlasses <= 0) {
                 console.log(`El Erudito ha muerto.`);
